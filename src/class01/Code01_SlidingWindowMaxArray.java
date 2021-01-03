@@ -2,6 +2,12 @@ package class01;
 
 import java.util.LinkedList;
 
+/**
+ * 假设一个固定大小为W的窗口，依次划过arr，
+ * 返回每一次滑出状况的最大值
+ * 例如，arr = [4,3,5,4,3,3,6,7], W = 3
+ * 返回：[5,5,5,4,6,7]
+ */
 public class Code01_SlidingWindowMaxArray {
 
 	public static int[] getMaxWindow(int[] arr, int w) {

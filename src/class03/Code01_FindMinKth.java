@@ -3,6 +3,13 @@ package class03;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
+/**
+ * 在无序数组中求第K小的数
+ *
+ * 1）改写快排的方法
+ *
+ * 2）bfprt算法
+ */
 public class Code01_FindMinKth {
 
 	public static class MaxHeapComparator implements Comparator<Integer> {

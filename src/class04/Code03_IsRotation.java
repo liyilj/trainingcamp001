@@ -1,5 +1,8 @@
 package class04;
 
+/**
+ * 判断两个字符串是不是互为翻转字符串
+ */
 public class Code03_IsRotation {
 
 	public static boolean isRotation(String a, String b) {
