@@ -1,5 +1,8 @@
 package class05;
 
+/**
+ * 一个str，只能在str后面添加字符串，使str变成回文串，最短添加几个字符，返回添加的字符
+ */
 public class Code02_AddShortestEnd {
 
 	public static String shortestEnd(String s) {

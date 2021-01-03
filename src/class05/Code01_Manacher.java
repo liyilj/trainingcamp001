@@ -1,5 +1,8 @@
 package class05;
 
+/**
+ * Manacher算法
+ */
 public class Code01_Manacher {
 
 	public static int manacher(String s) {
