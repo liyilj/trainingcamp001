@@ -1,5 +1,12 @@
 package class06;
 
+/**
+ * morris 遍历
+ * morris 中序遍历
+ * morris 先序遍历
+ * morris 后序遍历
+ * morris 遍历判断BST
+ */
 public class Code01_MorrisTraversal {
 
 	public static class Node {
