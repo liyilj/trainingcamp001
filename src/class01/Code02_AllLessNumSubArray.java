@@ -58,6 +58,47 @@ public class Code02_AllLessNumSubArray {
 		return res;
 	}
 
+
+
+	public static int getNum2(int[] arr, int num) {
+		if (arr == null || arr.length < 1 || num < 0) {
+			return 0;
+		}
+
+		LinkedList<Integer> qmax = new LinkedList<>();
+		LinkedList<Integer> qmin = new LinkedList<>();
+		int L = 0;
+		int R = 0;
+		int res = 0;
+		while (L < arr.length) {
+			while (R < arr.length) {
+				while (!qmax.isEmpty() && arr[qmax.peekLast()] <= arr[R]) {
+					qmax.pollLast();
+				}
+				qmax.addLast(R);
+				while (!qmin.isEmpty() && arr[qmin.peekLast()] >= arr[R]) {
+					qmin.pollLast();
+				}
+				qmin.addLast(R);
+
+				if (arr[qmax.peekFirst()] - arr[qmin.peekFirst()] > num) {
+					break;
+				}
+				R++;
+			}
+			res += R -L;
+
+			if (qmax.peekFirst() == L) {
+				qmax.pollFirst();
+			}
+			if (qmin.peekFirst() == L) {
+				qmin.pollFirst();
+			}
+			L++;
+		}
+		return res;
+	}
+
 	// for test
 	public static int[] getRandomArray(int len) {
 		if (len < 0) {
@@ -85,6 +126,7 @@ public class Code02_AllLessNumSubArray {
 		int num = 5;
 		printArray(arr);
 		System.out.println(getNum(arr, num));
+		System.out.println(getNum2(arr, num));
 
 	}
 

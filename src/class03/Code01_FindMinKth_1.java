@@ -5,50 +5,51 @@ import java.util.PriorityQueue;
 
 /**
  * 在无序数组中求第K小的数
- *
+ * <p>
  * 1）改写快排的方法
- *
+ * <p>
  * 2）bfprt算法
  */
 public class Code01_FindMinKth_1 {
 
-    public static class MaxHeapComparator implements Comparator<Integer> {
+    public static class FindMinComparator implements Comparator<Integer> {
 
         @Override
         public int compare(Integer o1, Integer o2) {
-            return o2 - o1;
+            return o1 - o2;
         }
-
     }
 
     // 利用大根堆，时间复杂度O(N*logK)
     public static int minKth1(int[] arr, int k) {
-        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(new Code01_FindMinKth.MaxHeapComparator());
-        for (int i = 0; i < k; i++) {
-            maxHeap.add(arr[i]);
+        if (arr == null || arr.length < k || k < 1) {
+            return -1;
         }
-        for (int i = k; i < arr.length; i++) {
-            if (arr[i] < maxHeap.peek()) {
-                maxHeap.poll();
-                maxHeap.add(arr[i]);
-            }
+        PriorityQueue<Integer> heap = new PriorityQueue<>(new FindMinComparator());
+        for (int i = 0; i < arr.length; i++) {
+            heap.add(arr[i]);
         }
-        return maxHeap.peek();
+        for (int i = 0; i < k - 1; i++) {
+            heap.poll();
+        }
+        return heap.poll();
     }
 
     // 改写快排，时间复杂度O(N)
-    public static int minKth2(int[] array, int k) {
-        int[] arr = copyArray(array);
-        return process2(arr, 0, arr.length - 1, k - 1);
+    public static int minKth2(int[] arr, int k) {
+        if (arr == null || arr.length < k || k < 1) {
+            return -1;
+        }
+        return process2(copyArray(arr), 0, arr.length - 1, k - 1);
     }
 
-    public static int[] copyArray(int[] array) {
-        if (array == null || array.length < 1) {
+    public static int[] copyArray(int[] arr) {
+        if (arr == null || arr.length < 1) {
             return null;
         }
-        int[] res = new int[array.length];
-        for (int i = 0; i < array.length; i++) {
-            res[i] = array[i];
+        int[] res = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            res[i] = arr[i];
         }
         return res;
     }
@@ -57,16 +58,16 @@ public class Code01_FindMinKth_1 {
         if (L == R) {
             return arr[index];
         }
-        int pivot = arr[L + (int) (Math.random() * (R - L + 1))];
+        int pivot = arr[L + (int) Math.random() * (R - L + 1)];
+
         int[] range = partition(arr, L, R, pivot);
+
         if (index >= range[0] && index <= range[1]) {
             return arr[index];
+        } else if (index < range[0]) {
+            return process2(arr, L, range[0] - 1, index);
         } else {
-            if (index < range[0]) {
-                return process2(arr, L, range[0] - 1, index);
-            } else {
-                return process2(arr, range[1] + 1, R, index);
-            }
+            return process2(arr, range[1] + 1, R, index);
         }
     }
 
@@ -92,6 +93,54 @@ public class Code01_FindMinKth_1 {
         arr[b] = tmp;
     }
 
+    // bfprt，时间复杂度O(N)
+    public static int minKth3(int[] arr, int k) {
+        if (arr == null || arr.length < k || k < 1) {
+            return -1;
+        }
+
+
+        return bfprt(copyArray(arr), 0, arr.length - 1, k - 1);
+    }
+
+    public static int bfprt(int[] arr, int L, int R, int index) {
+        if (L == R) {
+            return arr[index];
+        }
+        int pivot = chooseM(arr, L, R);
+        int[] range = partition(arr, L, R, pivot);
+        if (index >= range[0] && index <= range[1]) {
+            return arr[index];
+        } else if (index < range[0]) {
+            return bfprt(arr, L, range[0] - 1, index);
+        } else {
+            return bfprt(arr, range[1] + 1, R, index);
+        }
+    }
+
+    public static int chooseM(int[] arr, int L, int R) {
+        int len = R - L + 1;
+        int groups = len / 5 + (len % 5 > 0 ? 1 : 0);
+        int[] marr = new int[groups];
+        for (int i = 0; i < groups; i++) {
+            int start = L + i * 5;
+            int end = Math.min(R, start + 4);
+            insertSort(arr, start, end);
+            marr[i] = arr[(end + start) / 2];
+        }
+
+        return bfprt(marr, 0, groups - 1, groups / 2);
+    }
+
+    public static void insertSort(int[] arr, int L, int R) {
+        for (int i = L + 1; i <= R; i++) {
+            for (int j = i - 1; j >= L && arr[j] > arr[j + 1]; j--) {
+                swap(arr, j, j + 1);
+            }
+        }
+    }
+
+
     // for test
     public static int[] generateRandomArray(int maxSize, int maxValue) {
         int[] arr = new int[(int) (Math.random() * maxSize) + 1];
@@ -111,8 +160,8 @@ public class Code01_FindMinKth_1 {
             int k = (int) (Math.random() * arr.length) + 1;
             int ans1 = minKth1(arr, k);
             int ans2 = minKth2(arr, k);
-//            int ans3 = minKth3(arr, k);
-            if (ans1 != ans2 /*|| ans2 != ans3*/) {
+            int ans3 = minKth3(arr, k);
+            if (ans1 != ans2 || ans2 != ans3) {
                 System.out.println("Oops!");
             }
         }
