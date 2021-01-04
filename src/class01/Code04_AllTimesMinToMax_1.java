@@ -69,6 +69,34 @@ public class Code04_AllTimesMinToMax_1 {
         return max;
     }
 
+    public static int max3(int[] arr) {
+        if (arr == null || arr.length < 1) {
+            return 0;
+        }
+        int[] presum = new int[arr.length];
+        presum[0] = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            presum[i] = presum[i-1] + arr[i];
+        }
+        int max = Integer.MIN_VALUE;
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 0; i < arr.length; i++) {
+            while (!stack.isEmpty() && arr[stack.peek()] >= arr[i]) {
+                int cur = stack.pop();
+                int sum = stack.isEmpty() ? presum[i-1]: presum[i-1] - presum[stack.peek()];
+                max = Math.max(max, arr[cur] * sum);
+            }
+            stack.push(i);
+        }
+        while (!stack.isEmpty()) {
+            int cur = stack.pop();
+            int sum = stack.isEmpty() ? presum[arr.length-1] : presum[arr.length-1] - presum[stack.peek()];
+            max = Math.max(max, arr[cur]* sum);
+        }
+
+        return max;
+    }
+
     public static int[] gerenareRondomArray() {
         int[] arr = new int[(int) (Math.random() * 20) + 10];
         for (int i = 0; i < arr.length; i++) {
@@ -82,7 +110,7 @@ public class Code04_AllTimesMinToMax_1 {
         System.out.println("test begin");
         for (int i = 0; i < testTimes; i++) {
             int[] arr = gerenareRondomArray();
-            if (max1(arr) != max2(arr)) {
+            if (max1(arr) != max3(arr)) {
                 System.out.println("FUCK!");
                 break;
             }
