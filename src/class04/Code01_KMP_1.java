@@ -1,51 +1,67 @@
 package class04;
 
-public class Code01_KMP_1 {
-
+/**
+ * KMP算法
+ * 假设字符串str长度为N，字符串match长度为M，M <= N
+ *
+ * 想确定str中是否有某个子串是等于match的。
+ *
+ * 时间复杂度O(N)
+ *
+ * KMP算法核心
+ * 1）如何理解next数组
+ *
+ * 2）如何利用next数组加速匹配过程，优化时的两个实质！（私货解释）
+ */
+public class Code01_KMP_1 {  //TODO coding
+    // O(N)
     public static int getIndexOf(String s, String m) {
-        if (s == null || m == null || s.length() < m.length()) {
+        if (s == null || m == null || m.length() < 1 || s.length() < m.length()) {
             return -1;
         }
-
         char[] str = s.toCharArray();
         char[] match = m.toCharArray();
-
-        int[] next = getNextArray(match);
-        int x = 0;
-        int y = 0;
+        int x = 0; // str中当前比对到的位置
+        int y = 0; // match中当前比对到的位置
+        // M  M <= N   O(M)
+        int[] next = getNextArray(match); // next[i]  match中i之前的字符串match[0..i-1]
+        // O(N)
         while (x < str.length && y < match.length) {
             if (str[x] == match[y]) {
                 x++;
                 y++;
-            } else if (y > 0) {
-                y = next[y];
-            } else {
+            } else if (next[y] == -1) { // y == 0
                 x++;
+            } else {
+                y = next[y];
             }
         }
         return y == match.length ? x - y : -1;
     }
 
+    // M   O(M)
     public static int[] getNextArray(char[] match) {
-        if(match.length == 1) {
-            return new int[]{-1};
+        if (match.length == 1) {
+            return new int[] { -1 };
         }
-        int[] res = new int[match.length];
-        res[0] = -1;
-        res[1] = 0;
-        int cn = 0;
+        int[] next = new int[match.length];
+        next[0] = -1;
+        next[1] = 0;
         int i = 2;
-        while (i < match.length) {
-            if (match[cn] == match[i-1]) {
-                res[i++] = ++cn;
-            } else if(cn > 0) {
-                cn = res[cn];
+        // cn代表，cn位置的字符，是当前和i-1位置比较的字符
+        int cn = 0;
+        while (i < next.length) {
+            if (match[i - 1] == match[cn]) { // 跳出来的时候
+                next[i++] = ++cn;
+            } else if (cn > 0) {
+                cn = next[cn];
             } else {
-                res[i++] = 0;
+                next[i++] = 0;
             }
         }
-        return res;
+        return next;
     }
+
     // for test
     public static String getRandomString(int possibilities, int size) {
         char[] ans = new char[(int) (Math.random() * size) + 1];
@@ -70,4 +86,5 @@ public class Code01_KMP_1 {
         }
         System.out.println("test finish");
     }
+
 }
